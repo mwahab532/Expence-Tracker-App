@@ -6,31 +6,36 @@ import 'app/app.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.presentError(details);
-      debugPrint('FlutterError: ${details.exceptionAsString()}');
-    };
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details);
+        debugPrint('FlutterError: ${details.exceptionAsString()}');
+      };
 
-    PlatformDispatcher.instance.onError = (error, stack) {
-      debugPrint('PlatformDispatcher error: $error');
-      return true; // handled — prevents the default crash behavior
-    };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        debugPrint('PlatformDispatcher error: $error');
+        return true; // handled — prevents the default crash behavior
+      };
 
-    try {
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-      runApp(const ExpenseTrackerApp());
-    } catch (e, st) {
-      debugPrint('Firebase.initializeApp failed: $e');
-      debugPrint('$st');
-      runApp(_StartupErrorApp(error: e));
-    }
-  }, (error, stack) {
-    debugPrint('Uncaught zone error: $error');
-    debugPrint('$stack');
-  });
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+        runApp(const ExpenseTrackerApp());
+      } catch (e, st) {
+        debugPrint('Firebase.initializeApp failed: $e');
+        debugPrint('$st');
+        runApp(_StartupErrorApp(error: e));
+      }
+    },
+    (error, stack) {
+      debugPrint('Uncaught zone error: $error');
+      debugPrint('$stack');
+    },
+  );
 }
 
 class _StartupErrorApp extends StatelessWidget {
